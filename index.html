@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Document</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        
+        #map {
+            height: 600px;
+        }
+
+        .legend {
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .legend-item {
+            margin-bottom: 5px;
+        }
+
+        .legend-color {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 50%;
+            border: 2px solid black;
+        }
+    </style>
+</head>
+
+<body>
+     
+
+    <div class="legend">
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #3366FF;"></span> Loam <i>( Luwad na Lupa )</i>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #FF5733;"></span> Sandy loam <i>( Buhanging Luwad )</i>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #33FF57;"></span> Clay <i>( Putik )</i>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #FFFF00;"></span> Silt <i>( Luad )</i>
+        </div>
+        <div class="legend-item">
+            <span class="legend-color" style="background-color: #FF00FF;"></span> Peat <i>( Paet )</i>
+        </div>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([13.9314, 121.6177], 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var soilProfileData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Lucban",
+                        "depth": "0-30 cm",
+                        "texture": "Loam",
+                        "ph": 6.8,
+                        "marker-color": "#3366FF"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [121.5553, 14.1141]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Lucena City",
+                        "depth": "0-30 cm",
+                        "texture": "Sandy loam",
+                        "ph": 6.5,
+                        "marker-color": "#FF5733"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [121.6177, 13.9314]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Tayabas City",
+                        "depth": "30-60 cm",
+                        "texture": "Clay",
+                        "ph": 5.8,
+                        "marker-color": "#33FF57"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [121.591608, 14.024425]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Pagbilao",
+                        "depth": "0-30 cm",
+                        "texture": "Sandy loam",
+                        "ph": 6.4,
+                        "marker-color": "#FF9900"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [121.686139, 13.971999]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Atimonan",
+                        "depth": "30-60 cm",
+                        "texture": "Clay",
+                        "ph": 5.9,
+                        "marker-color": "#663399"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [121.917088, 13.999734]
+                    }
+                }
+            ]
+        };
+
+        L.geoJSON(soilProfileData, {
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 8,
+                    fillColor: feature.properties['marker-color'],
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+            },
+            onEachFeature: function (feature, layer) {
+                layer.bindPopup(
+                    `<b>Location:</b> <tab>${feature.properties.location} <br>
+                     <b>Depth:</b> <tab>${feature.properties.depth} <br>
+                     <b>Texture:</b> <tab>${feature.properties.texture} <br>
+                     <b>pH:</b> <tab>${feature.properties.ph} 
+                     `
+                );
+            }
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
