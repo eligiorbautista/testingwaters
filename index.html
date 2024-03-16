@@ -5,7 +5,6 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
-        
         #map {
             height: 600px;
         }
@@ -33,7 +32,6 @@
 </head>
 
 <body>
-     
 
     <div class="legend">
         <div class="legend-item">
@@ -52,7 +50,20 @@
             <span class="legend-color" style="background-color: #FF00FF;"></span> Peat <i>( Paet )</i>
         </div>
     </div>
+
     <div id="map"></div>
+
+    <hr>
+    <button onclick="focusOnCity('Lucban')">Lucban</button>
+    <button onclick="focusOnCity('Lucena City')">Lucena City</button>
+    <button onclick="focusOnCity('Tayabas City')">Tayabas City</button>
+    <button onclick="focusOnCity('Pagbilao')">Pagbilao</button>
+    <button onclick="focusOnCity('Atimonan')">Atimonan</button>
+    <hr>
+
+    <label for="city-search">Search city/municipality:</label>
+    <input type="text" id="city-search" style="width: 20vw;" placeholder="Enter city / municipality">
+    <button onclick="searchCity()">Search</button>
 
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script>
@@ -135,6 +146,32 @@
             ]
         };
 
+        function focusOnCity(cityName) {
+            var city = soilProfileData.features.find((feature) => {
+                const location = feature.properties.location.toLowerCase();
+                const words = cityName.toLowerCase().split(" ");
+                return location === cityName.toLowerCase() || location.includes(cityName.toLowerCase());
+            });
+
+            if (city) {
+                const reversedCoordinates = city.geometry.coordinates.slice().reverse();
+                map.setView(reversedCoordinates, 13); 
+            }
+        }
+
+        function searchCity() {
+            var cityName = document.getElementById("city-search").value.trim();
+            focusOnCity(cityName.toLowerCase());
+        }
+
+        var input = document.getElementById("city-search");
+        input.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                searchCity();
+            }
+        });
+
         L.geoJSON(soilProfileData, {
             pointToLayer: function (feature, latlng) {
                 return L.circleMarker(latlng, {
@@ -148,10 +185,10 @@
             },
             onEachFeature: function (feature, layer) {
                 layer.bindPopup(
-                    `<b>Location:</b> <tab>${feature.properties.location} <br>
-                     <b>Depth:</b> <tab>${feature.properties.depth} <br>
-                     <b>Texture:</b> <tab>${feature.properties.texture} <br>
-                     <b>pH:</b> <tab>${feature.properties.ph} 
+                    `<b>Location:</b> ${feature.properties.location} <br>
+                     <b>Depth:</b> ${feature.properties.depth} <br>
+                     <b>Texture:</b> ${feature.properties.texture} <br>
+                     <b>pH:</b> ${feature.properties.ph} 
                      `
                 );
             }
